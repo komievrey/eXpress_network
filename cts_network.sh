@@ -127,6 +127,7 @@ function Help(){
         keys:
                 --help / -h                     help
                 --nopass / -np                  removes passwords from settings.yaml
+                --noarchive / -na               archive is not created and cts_diagnostic is not deleted
         "
     echo "*************************************************************************************"
 }
@@ -417,24 +418,51 @@ function CreateArchive () {
 }
 
 
+# Переменная для отслеживания ключей
+nopass=false
+noarchive=false
 
+while getopts ":hna" opt; do
+    case $opt in
+        h)
+            Help
+            exit 0
+            ;;
+        n)
+            nopass=true
+            ;;
+        a)
+            noarchive=true
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            Help
+            exit 1
+            ;;
+    esac
+done
 
-if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
-        Help
-elif [ "$1" == "--nopass" ] || [ "$1" == "-np" ]; then
-        CheckRoot
-        CheckCTS
-        CheckSettingsFiles
-        CheckSettingsNoPass
-        
-else 
-    echo "No check argument"
-    CheckRoot
-    CheckCTS
-    CheckSettingsFiles
+# Вызов функций на основе переданных ключей
+CheckRoot
+CheckCTS
+CheckSettingsFiles
 
+if [ "$nopass" = true ]; then
+    echo "No password option selected."
+    CheckSettingsNoPass
+    CreateArchive
 fi
 
-#CheckCTS
+if [ "$noarchive" = true ]; then
+    echo "No archive option selected."
+    # Здесь можно добавить действия, которые нужно выполнить без архивирования
+fi
 
-#CreateArchive
+# Если не переданы никакие опции, можно добавить дополнительные действия
+if [ "$nopass" = false ] && [ "$noarchive" = false ]; then
+    echo "No specific options selected; proceeding with default operations."
+    CreateArchive
+fi
+
+
+

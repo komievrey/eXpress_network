@@ -40,6 +40,8 @@ bash cts_network.sh
 
 --nopass / -np : сирает пароли из settings.yaml
 
+--noarchive / -na : не создает архив
+
 Пример команды с ключем:
 
 ```bash
