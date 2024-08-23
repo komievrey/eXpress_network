@@ -34,8 +34,8 @@ function CheckCTS() {
                         echo -e "${PURPLE} This Front CTS ${END}"
                         CheckRedis
                         CheckNetwork
-        	        CheckTelnet
-        	        CheckSS
+        	            CheckTelnet
+        	            CheckSS
                         CheckDB
                         CheckKafka
                         CheckEtcd
@@ -46,8 +46,8 @@ function CheckCTS() {
                 elif [ -n "$FBb" ]; then
                         echo -e "${PURPLE} This Back CTS ${END}"
                         CheckNetwork
-        	        CheckTelnet
-        	        CheckSS
+        	            CheckTelnet
+        	            CheckSS
                         CheckDB
                         CheckKafka
                         CheckEtcd
@@ -61,8 +61,8 @@ function CheckCTS() {
                 elif [ -z "$FBb" ] && [ -z "$FBf" ]; then
                         echo -e "${PURPLE} This Single CTS ${END} "
                         CheckNetwork
-        	        CheckTelnet
-        	        CheckSS
+        	            CheckTelnet
+        	            CheckSS
                         CheckDB
                         CheckKafka
                         CheckEtcd
@@ -103,6 +103,30 @@ function CheckSettingsNoPass () {
         echo -e "${PURPLE} good ${END}"
 
 
+}
+
+function Help(){
+    echo -e "${GREEN} HELP ${END}"
+    echo "*************************************************************************************"
+    echo "Script collects data about service availability, network connections and settings:
+            - Redis
+            - Postgres
+            - Kafka
+            - Etcd
+            - iptables
+            - ip route
+            - nslookup ccs_host
+            - Telnet to registry.public.express
+            - Telnet to ru.public.express (RTS)
+            - Netstat (ss)
+            - SSL
+            - Copy settings.yaml
+            - voex_redis
+            - Availability Janus"
+    echo "keys:
+        --help / -h : help
+        --nopass / -np : removes passwords from settings.yaml"
+    echo "*************************************************************************************"
 }
 
 
@@ -393,13 +417,27 @@ function CreateArchive () {
 
 CheckRoot
 
-if [ "$1" == "nopass" ]; then
+if [ "$1" == "--nopass" ] || [ "$1" == "-np" ]; then
         CheckSettingsNoPass
 else
         echo "No check argument"
         CheckSettingsFiles
 fi
 
-CheckCTS
+CheckRoot
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+        Help
+elif [ "$1" == "--nopass" ] || [ "$1" == "-np" ]; then
+        CheckSettingsNoPass
+
+
+
+
+        echo "No check argument"
+        CheckCTS
+fi
+
+#CheckCTS
 
 CreateArchive
