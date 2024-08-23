@@ -123,9 +123,11 @@ function Help(){
             - Copy settings.yaml
             - voex_redis
             - Availability Janus"
-    echo "keys:
-        --help / -h : help
-        --nopass / -np : removes passwords from settings.yaml"
+    echo "
+        keys:
+                --help / -h                     help
+                --nopass / -np                  removes passwords from settings.yaml
+        "
     echo "*************************************************************************************"
 }
 
@@ -417,25 +419,15 @@ function CreateArchive () {
 
 CheckRoot
 
-if [ "$1" == "--nopass" ] || [ "$1" == "-np" ]; then
-        CheckSettingsNoPass
-else
-        echo "No check argument"
-        CheckSettingsFiles
-fi
-
-CheckRoot
-
 if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
         Help
 elif [ "$1" == "--nopass" ] || [ "$1" == "-np" ]; then
         CheckSettingsNoPass
-
-
-
-
-        echo "No check argument"
         CheckCTS
+else 
+    echo "No check argument"
+    CheckCTS
+
 fi
 
 #CheckCTS
