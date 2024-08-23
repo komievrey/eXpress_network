@@ -417,19 +417,24 @@ function CreateArchive () {
 }
 
 
-CheckRoot
+
 
 if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
         Help
 elif [ "$1" == "--nopass" ] || [ "$1" == "-np" ]; then
-        CheckSettingsNoPass
+        CheckRoot
         CheckCTS
+        CheckSettingsFiles
+        CheckSettingsNoPass
+        
 else 
     echo "No check argument"
+    CheckRoot
     CheckCTS
+    CheckSettingsFiles
 
 fi
 
 #CheckCTS
 
-CreateArchive
+#CreateArchive
