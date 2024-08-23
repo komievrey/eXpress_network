@@ -442,7 +442,7 @@ while getopts ":hna" opt; do
     esac
 done
 
-# Вызов функций на основе переданных ключей
+
 CheckRoot
 CheckCTS
 CheckSettingsFiles
@@ -455,10 +455,10 @@ fi
 
 if [ "$noarchive" = true ]; then
     echo "No archive option selected."
-    # Здесь можно добавить действия, которые нужно выполнить без архивирования
+    
 fi
 
-# Если не переданы никакие опции, можно добавить дополнительные действия
+
 if [ "$nopass" = false ] && [ "$noarchive" = false ]; then
     echo "No specific options selected; proceeding with default operations."
     CreateArchive
