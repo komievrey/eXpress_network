@@ -14,9 +14,9 @@ cts_network.sh
 ```bash
 bash cts_network.sh
 ```
-Данный скрипт работает только на single или front+back CTS
+Данный скрипт работает только на voex, single или front+back CTS
 
-Сприпт собирает данные о доступности сервисов и сетевого взаимодействия и настроек:
+Скрипт собирает данные о доступности сервисов, сетевого взаимодействия и настроек:
 
 - Redis
 - Postgres
@@ -28,7 +28,7 @@ bash cts_network.sh
 - Telnet до registry.public.express
 - Telnet до ru.public.express (RTS)
 - Netstat (ss)
-- Даннные о SSL
+- Данные о SSL
 - Копирование settings.yaml
 - voex_redis
 - Доступность Janus
@@ -42,7 +42,7 @@ bash cts_network.sh
 
 -ar : создает архив
 
-Пример команды с ключем:
+Пример команды с параметрами:
 
 ```bash
 cts_network.sh -h
