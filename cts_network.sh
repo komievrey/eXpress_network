@@ -74,10 +74,10 @@ function CheckCTS() {
                 fi
         fi
 	if [ -d "$VOEX" ]; then
-                echo -e "${GREEN} This Voex server ${END}"
-		CheckNetwork
-        	CheckSS
-		CheckVoexService
+            echo -e "${GREEN} This Voex server ${END}"
+		    CheckNetwork
+            CheckSS
+		    CheckVoexService
 	fi
 }
 #____________________________________________________________________________
@@ -440,10 +440,10 @@ for arg in "$@"; do
             Help
             ;;
         -np)
-            # CheckSettingsNoPass уже выполнена
+            # CheckSettingsNoPass
             ;;
         -ar)
-            # CreateArchive уже выполнена
+            # CreateArchive
             ;;
         -npar)
             CreateArchive
@@ -462,10 +462,3 @@ if [ $# -eq 0 ]; then
     CheckCTS
     CheckSettingsFiles
 fi
-
-
-#CheckRoot
-#CheckCTS
-#CheckSettingsFiles
-
-
