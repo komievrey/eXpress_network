@@ -30,7 +30,7 @@ function CheckCTS() {
                 echo -e "${PURPLE} CheckCTS ${END}"
 
                 if [ -n "$FBf" ]; then
-                        echo -e "${GREEN} This Front CTS ${END}"
+                        echo -e "${YELLOW} This Front CTS ${END}"
                         CheckRedis
                         CheckNetwork
         	            CheckTelnet
@@ -43,7 +43,7 @@ function CheckCTS() {
                         
 
                 elif [ -n "$FBb" ]; then
-                        echo -e "${GREEN} This Back CTS ${END}"
+                        echo -e "${YELLOW} This Back CTS ${END}"
                         CheckNetwork
         	            CheckTelnet
         	            CheckSS
@@ -58,7 +58,7 @@ function CheckCTS() {
                         
 
                 elif [ -z "$FBb" ] && [ -z "$FBf" ]; then
-                        echo -e "${GREEN} This Single CTS ${END} "
+                        echo -e "${YELLOW} This Single CTS ${END} "
                         CheckNetwork
         	            CheckTelnet
         	            CheckSS
@@ -74,7 +74,7 @@ function CheckCTS() {
                 fi
         fi
 	if [ -d "$VOEX" ]; then
-            echo -e "${GREEN} This Voex server ${END}"
+            echo -e "${YELLOW} This Voex server ${END}"
 		    CheckNetwork
             CheckSS
 		    CheckVoexService
@@ -94,7 +94,7 @@ function CheckSettingsNoPass () {
         settM=("postgres_password:" "etcd_password:" "redis_password:" "sentinel_password:" "prometheus:" "AWS_ACCESS_KEY_ID:" "AWS_SECRET_ACCESS_KEY:" "api_internal_token:" "phoenix_secret_key_base:" "rts_token:")
 
         for settM in "${settM[@]}"; do 
-                echo $settM
+                #echo $settM
                 sed -i "s/^$settM .*/$settM /" $PWD/cts_diagnostic/settings_files/cts_settings.yaml
                 sed -i "s/^$settM .*/$settM /" $PWD/cts_diagnostic/settings_files/voice_settings.yaml
         done
@@ -384,7 +384,7 @@ function CheckJanus(){
 	for i in "${!ips[@]}"; do
 		ip="${ips[$i]}"
 		port="${ports[$i]}"
-		echo $ip $port
+		#echo $ip $port
 		(echo open $ip $port; sleep 1; echo quit) | telnet >> $PWD/cts_diagnostic/host_info/network/janus_telnet.txt 2> /dev/null
 
                 status_ok=$(grep 'Connected to' $PWD/cts_diagnostic/host_info/network/janus_telnet.txt )
@@ -452,7 +452,7 @@ for arg in "$@"; do
             CreateArchive
             ;;
         *)
-            echo "Неизвестный ключ: $arg"
+            echo -e "${RED} Неизвестный ключ: $arg ${END}"
             ;;
     esac
 done
