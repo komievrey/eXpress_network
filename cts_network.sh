@@ -30,7 +30,7 @@ function CheckCTS() {
                 echo -e "${PURPLE} CheckCTS ${END}"
 
                 if [ -n "$FBf" ]; then
-                        echo -e "${YELLOW} This Front CTS ${END}"
+                        echo -e "${YELLOW} Front CTS ${END}"
                         CheckRedis
                         CheckNetwork
         	            CheckTelnet
@@ -43,7 +43,7 @@ function CheckCTS() {
                         
 
                 elif [ -n "$FBb" ]; then
-                        echo -e "${YELLOW} This Back CTS ${END}"
+                        echo -e "${YELLOW} Back CTS ${END}"
                         CheckNetwork
         	            CheckTelnet
         	            CheckSS
@@ -58,7 +58,7 @@ function CheckCTS() {
                         
 
                 elif [ -z "$FBb" ] && [ -z "$FBf" ]; then
-                        echo -e "${YELLOW} This Single CTS ${END} "
+                        echo -e "${YELLOW} Single CTS ${END} "
                         CheckNetwork
         	            CheckTelnet
         	            CheckSS
@@ -74,7 +74,7 @@ function CheckCTS() {
                 fi
         fi
 	if [ -d "$VOEX" ]; then
-            echo -e "${YELLOW} This Voex server ${END}"
+            echo -e "${YELLOW} Voex server ${END}"
 		    CheckNetwork
             CheckSS
 		    CheckVoexService
