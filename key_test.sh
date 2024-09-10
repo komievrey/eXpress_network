@@ -1,76 +1,51 @@
+#!/bin/bash
 
+# Функции для каждого ключа
+function use_ipv4() {
+    echo "Используется IPv4"
+}
 
-while getopts ":hnpna" opt; do
-    case $opt in
-        h)
-            Help
-            exit 0
+function use_ipv6() {
+    echo "Используется IPv6"
+}
+
+function allow_broadcast() {
+    echo "Разрешено широковещательное вещание"
+}
+
+# Проверка переданных аргументов
+for arg in "$@"; do
+    case $arg in
+        -4)
+            use_ipv4
             ;;
-        n)
-            case $OPTARG in
-                p)
-                    echo "-np"
-                    CheckRoot
-                    CheckCTS
-                    CheckSettingsFiles
-                    CheckSettingsNoPass
-                    CreateArchive
-                    ;;
-                a)
-                    echo "-na"
-                    CheckRoot
-                    CheckCTS
-                    CheckSettingsFiles
-                    ;;
-            esac
+        -6)
+            use_ipv6
             ;;
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            Help
-            exit 1
+        -b)
+            allow_broadcast
             ;;
-        :)
-            echo "Option -$OPTARG requires an argument." >&2
-            Help
-            exit 1
+        *)
+            echo "Неизвестный ключ: $arg"
             ;;
     esac
 done
 
-# Если не было передано никаких аргументов
-if [ $OPTIND -eq 1 ]; then
-    echo "No check argument"
-    CheckRoot
-    CheckCTS
-    CheckSettingsFiles
+
+
+if [ "$nopass" = true ]; then
+    echo "No password option selected."
+    CheckSettingsNoPass
     CreateArchive
 fi
 
-
-
-if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
-        Help
-elif [ "$1"  == "--nopass" ] || [ "$1" == "-np" ]; then
-        echo "-np"
-        CheckRoot
-        CheckCTS
-        CheckSettingsFiles
-        CheckSettingsNoPass
-        CreateArchive
-elif [ "$1" == "--noarchive" ] || [ "$2" == "--noarchive" ] || [ "$1" == "-na" ] || [ "$2" == "-na" ]; then
-        echo "-na"
-        CheckRoot
-        CheckCTS
-        CheckSettingsFiles
-else 
-    echo "No check argument"
-    CheckRoot
-    CheckCTS
-    CheckSettingsFiles
-    CreateArchive
-
+if [ "$noarchive" = true ]; then
+    echo "No archive option selected."
+    
 fi
 
-#CheckCTS
 
-#CreateArchive
+if [ "$nopass" = false ] && [ "$noarchive" = false ]; then
+    echo "No specific options selected; proceeding with default operations."
+    CreateArchive
+fi

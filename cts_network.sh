@@ -15,12 +15,12 @@ mkdir -p $PWD/cts_diagnostic/host_info/network
 mkdir cts_diagnostic/settings_files
 #_______________________________________________________________________________________________________________
 function CheckRoot () {
-        echo -e "${GREEN} CheckRoot ${END}"
+        echo -e "${PURPLE} CheckRoot ${END}"
         if [ "$EUID" -ne 0 ]; then
                 echo -e "${RED} This script must be run when root or sudoer, because of docker checking ${END}"
                 exit 1
         else
-                echo -e "${PURPLE} good ${END}"
+                echo -e "${GREEN} good ${END}"
         fi
 }
 
@@ -28,10 +28,10 @@ function CheckRoot () {
 function CheckCTS() {
 
 	if [ -d "$CTS" ]; then
-                echo -e "${GREEN} CheckCTS ${END}"
+                echo -e "${PURPLE} CheckCTS ${END}"
 
                 if [ -n "$FBf" ]; then
-                        echo -e "${PURPLE} This Front CTS ${END}"
+                        echo -e "${GREEN} This Front CTS ${END}"
                         CheckRedis
                         CheckNetwork
         	            CheckTelnet
@@ -44,7 +44,7 @@ function CheckCTS() {
                         
 
                 elif [ -n "$FBb" ]; then
-                        echo -e "${PURPLE} This Back CTS ${END}"
+                        echo -e "${GREEN} This Back CTS ${END}"
                         CheckNetwork
         	            CheckTelnet
         	            CheckSS
@@ -59,7 +59,7 @@ function CheckCTS() {
                         
 
                 elif [ -z "$FBb" ] && [ -z "$FBf" ]; then
-                        echo -e "${PURPLE} This Single CTS ${END} "
+                        echo -e "${GREEN} This Single CTS ${END} "
                         CheckNetwork
         	            CheckTelnet
         	            CheckSS
@@ -75,7 +75,7 @@ function CheckCTS() {
                 fi
         fi
 	if [ -d "$VOEX" ]; then
-                echo -e "${PURPLE} This Voex server ${END}"
+                echo -e "${GREEN} This Voex server ${END}"
 		CheckNetwork
         	CheckSS
 		CheckVoexService
@@ -84,7 +84,7 @@ function CheckCTS() {
 #____________________________________________________________________________
 
 function CheckSettingsNoPass () {
-        echo -e "${GREEN} CheckSettingsNoPass ${END}"
+        echo -e "${PURPLE} CheckSettingsNoPass ${END}"
         if [ -d "$CTS" ]; then
                 cp /opt/express/settings.yaml $PWD/cts_diagnostic/settings_files/cts_settings.yaml
         fi
@@ -100,13 +100,13 @@ function CheckSettingsNoPass () {
                 sed -i "s/^$settM .*/$settM /" $PWD/cts_diagnostic/settings_files/voice_settings.yaml
         done
 
-        echo -e "${PURPLE} good ${END}"
+        echo -e "${GREEN} good ${END}"
 
 
 }
 
 function Help(){
-    echo -e "${GREEN} HELP ${END}"
+    echo -e "${PURPLE} HELP ${END}"
     echo "*************************************************************************************"
     echo "Script collects data about service availability, network connections and settings:
             - Redis
@@ -125,24 +125,24 @@ function Help(){
             - Availability Janus"
     echo "
         keys:
-                --help / -h                     help
-                --nopass / -np                  removes passwords from settings.yaml
-                --noarchive / -na               archive is not created and cts_diagnostic is not deleted
+                -h                     help
+                -np                    removes passwords from settings.yaml
+                -ar                    archive created cts_diagnostic
         "
     echo "*************************************************************************************"
 }
 
 
 function CheckVoexService() {
-        echo -e "${GREEN} CheckVoexService ${END}"
+        echo -e "${PURPLE} CheckVoexService ${END}"
         if [ -d "$VOEX" ]; then
         cp /opt/express-voice/.voex/express-voice.service $PWD/cts_diagnostic/host_info/network/
         fi
-        echo -e "${PURPLE} good ${END}"        
+        echo -e "${GREEN} good ${END}"        
 }
 
 function CheckNetwork() {
-        echo -e " ${GREEN} CheckNetwork ${END} "
+        echo -e " ${PURPLE} CheckNetwork ${END} "
         ip a > $PWD/cts_diagnostic/host_info/network/interfaces.txt
         iptables -L -nvx > $PWD/cts_diagnostic/host_info/network/iptables.txt
         ip route > $PWD/cts_diagnostic/host_info/network/iproute.txt
@@ -156,11 +156,11 @@ function CheckNetwork() {
         echo "/opt/express/ and /opt/express-voice/ didn't exist" > $PWD/cts_diagnostic/host_info/no-express-folders!.txt
         ccs_host=noname
         fi
-        echo -e "${PURPLE} good ${END}"
+        echo -e "${GREEN} good ${END}"
 }
 
 function CheckTelnet() {
-        echo -e " ${GREEN} CheckTelnet ${END} "
+        echo -e " ${PURPLE} CheckTelnet ${END} "
         if command -v telnet > /dev/null ; then
         (echo open ru.public.express 5001; sleep 1; echo quit) | telnet > $PWD/cts_diagnostic/host_info/network/telnet.txt 2> /dev/null
         (echo open registry.public.express 443; sleep 1; echo quit) | telnet >> $PWD/cts_diagnostic/host_info/network/telnet.txt 2> /dev/null
@@ -168,28 +168,28 @@ function CheckTelnet() {
         echo -e "${RED} Telnet is not installed ${END}"
         echo "Telnet is not installed" > $PWD/cts_diagnostic/host_info/network/telnet.txt
         fi
-        echo -e "${PURPLE} good ${END}"
+        echo -e "${GREEN} good ${END}"
 }
 
 function CheckSS(){
-        echo -e " ${GREEN} CheckSS ${END} "
+        echo -e " ${PURPLE} CheckSS ${END} "
         if command -v ss > /dev/null ; then
         ss -tunlp > $PWD/cts_diagnostic/host_info/network/ss.txt
         else
         echo -e "${RED} SS is not installed ${END}"
         echo "SS is not installed" > $PWD/cts_diagnostic/host_info/network/ss.txt
         fi
-        echo -e "${PURPLE} good ${END}"
+        echo -e "${GREEN} good ${END}"
 }
 
 function CheckSSL () {
-        echo -e "${GREEN} CheckSSL ${END}"
+        echo -e "${PURPLE} CheckSSL ${END}"
         echo -e "GET / HTTP/1.0\n\n" | timeout 15 openssl s_client -connect $ccs_host:443 > $PWD/cts_diagnostic/host_info/network/openssl_info.txt 2>&1
-        echo -e "${PURPLE} good ${END}"
+        echo -e "${GREEN} good ${END}"
 }
 
 function CheckSettingsFiles () {
-        echo -e "${GREEN} CheckSettingsFiles ${END}"
+        echo -e "${PURPLE} CheckSettingsFiles ${END}"
 
         if [ -d "$CTS" ]; then
                 cp /opt/express/settings.yaml $PWD/cts_diagnostic/settings_files/cts_settings.yaml
@@ -198,11 +198,11 @@ function CheckSettingsFiles () {
 		cp /opt/express-voice/settings.yaml $PWD/cts_diagnostic/settings_files/voice_settings.yaml
         fi
 
-        echo -e "${PURPLE} good ${END}"
+        echo -e "${GREEN} good ${END}"
 }
 
 function CheckDB(){
-        echo -e "${GREEN} CheckDB ${END}"
+        echo -e "${PURPLE} CheckDB ${END}"
 	check_DB_ip=$(grep "postgres_endpoints:" /opt/express/settings.yaml | awk '{print $2}')
 	IFS=',' read -r -a addresses <<< "$check_DB_ip"
 	declare -a ips
@@ -221,7 +221,7 @@ function CheckDB(){
                 status_ok=$(grep 'Connected to' $PWD/cts_diagnostic/host_info/network/db_telnet.txt )
                 status_error=$(grep 'telnet: Unable to connect to remote host: Connection refused' $PWD/cts_diagnostic/host_info/network/db_telnet.txt )
                 if [ -n "$status_ok" ]; then
-                        echo -e "${PURPLE} Connected to $ip ${END}"
+                        echo -e "${GREEN} Connected to $ip ${END}"
                 elif [ -n "$status_error" ]; then
                         echo -e "${RED} Error connected to $ip ${END}"
                 fi
@@ -230,7 +230,7 @@ function CheckDB(){
 
 
 function CheckKafka(){
-        echo -e " ${GREEN} CheckKafka ${END}"
+        echo -e " ${PURPLE} CheckKafka ${END}"
         port_kafka_1="9092"
         port_kafka_2="9093"
         check_Kafka_ip=$(grep "kafka_host:" /opt/express/settings.yaml | awk '{print $2}')
@@ -252,7 +252,7 @@ function CheckKafka(){
                 status_ok=$(grep 'Connected to' $PWD/cts_diagnostic/host_info/network/kafka_telnet.txt )
                 status_error=$(grep 'telnet: Unable to connect to remote host: Connection refused' $PWD/cts_diagnostic/host_info/network/kafka_telnet.txt )
                 if [ -n "$status_ok" ]; then
-                        echo -e "${PURPLE} Connected to $ip ${END}"
+                        echo -e "${GREEN} Connected to $ip ${END}"
                 elif [ -n "$status_error" ]; then
                         echo -e "${RED} Error connected to $ip ${END}"
                 fi
@@ -261,7 +261,7 @@ function CheckKafka(){
 
 
 function CheckEtcd(){
-        echo -e "${GREEN} CheckEtcd ${END}"
+        echo -e "${PURPLE} CheckEtcd ${END}"
 	check_etcd_ip=$(grep "etcd_endpoints:" /opt/express/settings.yaml | awk '{print $2}' | sed 's,http://,,g')
 	IFS=',' read -r -a addresses <<< "$check_etcd_ip"
 	declare -a ips
@@ -280,7 +280,7 @@ function CheckEtcd(){
                 status_ok=$(grep 'Connected to' $PWD/cts_diagnostic/host_info/network/etcd_telnet.txt )
                 status_error=$(grep 'telnet: Unable to connect to remote host: Connection refused' $PWD/cts_diagnostic/host_info/network/etcd_telnet.txt )
                 if [ -n "$status_ok" ]; then
-                        echo -e "${PURPLE} Connected to $ip ${END}"
+                        echo -e "${GREEN} Connected to $ip ${END}"
                 elif [ -n "$status_error" ]; then
                         echo -e "${RED} Error connected to $ip ${END}"
                 fi
@@ -288,7 +288,7 @@ function CheckEtcd(){
 }
 
 function CheckRedis(){
-        echo -e "${GREEN} CheckRedis ${END}"
+        echo -e "${PURPLE} CheckRedis ${END}"
 	check_redis_ip=$(grep -E 'redis_connection_string' /opt/express/settings.yaml | grep -v 'voex_' | awk '{print $2}' | sed -e 's,redis://,,g' -e 's,/0,,g')
 	IFS=',' read -r -a addresses <<< "$check_redis_ip"
 	declare -a ips
@@ -307,7 +307,7 @@ function CheckRedis(){
                 status_ok=$(grep 'Connected to' $PWD/cts_diagnostic/host_info/network/redis_telnet.txt )
                 status_error=$(grep 'telnet: Unable to connect to remote host: Connection refused' $PWD/cts_diagnostic/host_info/network/redis_telnet.txt )
                 if [ -n "$status_ok" ]; then
-                        echo -e "${PURPLE} Connected to $ip ${END}"
+                        echo -e "${GREEN} Connected to $ip ${END}"
                 elif [ -n "$status_error" ]; then
                         echo -e "${RED} Error connected to $ip ${END}"
                 fi
@@ -316,7 +316,7 @@ function CheckRedis(){
 
 
 function CheckVoexCS(){
-        echo -e "${GREEN} CheckVoexCS ${END}"
+        echo -e "${PURPLE} CheckVoexCS ${END}"
 	check_voex_cs=$(grep "voex_redis_connection_string:" /opt/express/settings.yaml | awk -F'[@:]' '{print $(NF-1)":"$NF}' | sed 's,/1,,g')
 	if [ -n $check_voex_cs ]; then
         IFS=',' read -r -a addresses <<< "$check_voex_cs"
@@ -336,7 +336,7 @@ function CheckVoexCS(){
                 status_ok=$(grep 'Connected to' $PWD/cts_diagnostic/host_info/network/voex_r_cs_telnet.txt )
                 status_error=$(grep 'telnet: Unable to connect to remote host: Connection refused' $PWD/cts_diagnostic/host_info/network/voex_r_cs_telnet.txt )
                 if [ -n "$status_ok" ]; then
-                        echo -e "${PURPLE} Connected to $ip ${END}"
+                        echo -e "${GREEN} Connected to $ip ${END}"
                 elif [ -n "$status_error" ]; then
                         echo -e "${RED} Error connected to $ip ${END}"
                 fi
@@ -346,7 +346,7 @@ function CheckVoexCS(){
 }
 
 function CheckFB() {
-        echo -e "${GREEN} CheckFB ${END}"
+        echo -e "${PURPLE} CheckFB ${END}"
         front_ip=$(grep "frontend_host:" /opt/express/settings.yaml | awk '{print $2}')
         back_ip=$(grep "backend_host:" /opt/express/settings.yaml | awk '{print $2}')
         ping -c 15 $front_ip >> $PWD/cts_diagnostic/host_info/network/ping_front.txt 2> /dev/null
@@ -354,7 +354,7 @@ function CheckFB() {
         status_front=$(grep "PING $front_ip" -A 15 $PWD/cts_diagnostic/host_info/network/ping_front.txt )
         if [ -n "$status_ok" ]; then
                 echo -e "${GREEN} front ${END}"
-                echo -e "${PURPLE} "$status_front" ${END}" | sed 's/data\./data.\n/g; s/ms/ms\n/g'
+                echo -e "${GREEN} "$status_front" ${END}" | sed 's/data\./data.\n/g; s/ms/ms\n/g'
        else
                 echo -e "${RED} Please view the file ping_front.txt ${END}"
 
@@ -364,14 +364,14 @@ function CheckFB() {
         status_back=$(grep "PING $back_ip " -A 15 $PWD/cts_diagnostic/host_info/network/ping_back.txt )
         if [ -n "$status_ok" ]; then
                 echo -e "${GREEN} back ${END}"
-                echo -e "${PURPLE} "$status_back" ${END}" | sed 's/data\./data.\n/g; s/ms/ms\n/g'
+                echo -e "${GREEN} "$status_back" ${END}" | sed 's/data\./data.\n/g; s/ms/ms\n/g'
         else
                 echo -e "${RED} Please view the file ping_back.txt ${END}"
         fi
 }
 
 function CheckJanus(){
-        echo -e "${GREEN} CheckJanus ${END}"
+        echo -e "${PURPLE} CheckJanus ${END}"
 	check_janus_ws=$(docker exec -it cts-messaging-1 ./bin/messaging rpc Messaging.janus_urls | sed -e 's/\[//g' -e 's/\]//g' -e 's/\"//g' -e 's,ws://,,g')
 	if [ -n $check_voex_cs ]; then
         IFS=',' read -r -a addresses <<< "$check_janus_ws"
@@ -391,7 +391,7 @@ function CheckJanus(){
                 status_ok=$(grep 'Connected to' $PWD/cts_diagnostic/host_info/network/janus_telnet.txt )
                 status_error=$(grep 'telnet: Unable to connect to remote host: Connection refused' $PWD/cts_diagnostic/host_info/network/janus_telnet.txt )
                 if [ -n "$status_ok" ]; then
-                        echo -e "${PURPLE} Connected to $ip ${END}"
+                        echo -e "${GREEN} Connected to $ip ${END}"
                 elif [ -n "$status_error" ]; then
                         echo -e "${RED} Error connected to $ip ${END}"
                 fi
@@ -401,6 +401,7 @@ function CheckJanus(){
 
 
 function CreateArchive () {
+        echo -e "${PURPLE} CreateArchive ${END}"
         if [ -d "$CTS" ]; then
                 if grep -q "cts_frontend: true" /opt/express/settings.yaml; then serverrole=front-network
                 elif grep -q "cts_backend: true" /opt/express/settings.yaml; then serverrole=back-network
@@ -417,52 +418,25 @@ function CreateArchive () {
         echo -e "${GREEN} Written to $PWD/$ccs_host-$serverrole.tar.gz ${END}"
 }
 
-
-# Переменная для отслеживания ключей
-nopass=false
-noarchive=false
-
-while getopts ":hna" opt; do
-    case $opt in
-        h)
+for arg in "$@"; do
+    case $arg in
+        -h)
             Help
-            exit 0
             ;;
-        n)
-            nopass=true
+        -np)
+            CheckSettingsNoPass
             ;;
-        a)
-            noarchive=true
+        -ar)
+            CreateArchive
             ;;
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            Help
-            exit 1
+        *)
+            echo "Неизвестный ключ: $arg"
             ;;
     esac
 done
 
-
 CheckRoot
 CheckCTS
 CheckSettingsFiles
-
-if [ "$nopass" = true ]; then
-    echo "No password option selected."
-    CheckSettingsNoPass
-    CreateArchive
-fi
-
-if [ "$noarchive" = true ]; then
-    echo "No archive option selected."
-    
-fi
-
-
-if [ "$nopass" = false ] && [ "$noarchive" = false ]; then
-    echo "No specific options selected; proceeding with default operations."
-    CreateArchive
-fi
-
 
 
