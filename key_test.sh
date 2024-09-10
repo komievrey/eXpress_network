@@ -1,29 +1,48 @@
 #!/bin/bash
 
-# Функции для каждого ключа
-function use_ipv4() {
-    echo "Используется IPv4"
+Help() {
+    echo "Справка по использованию скрипта"
 }
 
-function use_ipv6() {
-    echo "Используется IPv6"
+CheckSettingsNoPass() {
+    echo "Выполняется CheckSettingsNoPass"
 }
 
-function allow_broadcast() {
-    echo "Разрешено широковещательное вещание"
+CreateArchive() {
+    echo "Выполняется CreateArchive"
 }
 
-# Проверка переданных аргументов
+Start() {
+    echo "Запуск без ключей"
+}
+
+# Проверка на использование -h с другими ключами
+if [[ "$*" == *"-h"* && "$*" != "-h" ]]; then
+    echo "Ключ -h не может использоваться с другими ключами"
+    exit 1
+fi
+
+# Обработка ключей
+if [[ "$*" == *"-np"* || "$*" == *"-npar"* || "$*" == *"-arnp"* ]]; then
+    CheckSettingsNoPass
+fi
+
 for arg in "$@"; do
     case $arg in
-        -4)
-            use_ipv4
+        -h)
+            Help
             ;;
-        -6)
-            use_ipv6
+        -np)
+            # CheckSettingsNoPass уже выполнена
             ;;
-        -b)
-            allow_broadcast
+        -ar)
+            CreateArchive
+            ;;
+        -npar)
+            CreateArchive
+            ;;
+        -arnp)
+            CreateArchive
             ;;
         *)
             echo "Неизвестный ключ: $arg"
@@ -31,21 +50,7 @@ for arg in "$@"; do
     esac
 done
 
-
-
-if [ "$nopass" = true ]; then
-    echo "No password option selected."
-    CheckSettingsNoPass
-    CreateArchive
-fi
-
-if [ "$noarchive" = true ]; then
-    echo "No archive option selected."
-    
-fi
-
-
-if [ "$nopass" = false ] && [ "$noarchive" = false ]; then
-    echo "No specific options selected; proceeding with default operations."
-    CreateArchive
+# Если не переданы никакие ключи, запускаем Start
+if [ $# -eq 0 ]; then
+    Start
 fi

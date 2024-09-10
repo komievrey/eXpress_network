@@ -10,9 +10,6 @@ CTS=/opt/express/
 VOEX=/opt/express-voice/
 FBf=$(grep "cts_frontend:" /opt/express/settings.yaml | awk '{print $1}')
 FBb=$(grep "cts_backend:" /opt/express/settings.yaml | awk '{print $1}')
-#_____________________________________________________________________________
-mkdir -p $PWD/cts_diagnostic/host_info/network
-mkdir cts_diagnostic/settings_files
 #_______________________________________________________________________________________________________________
 function CheckRoot () {
         echo -e "${PURPLE} CheckRoot ${END}"
@@ -21,6 +18,8 @@ function CheckRoot () {
                 exit 1
         else
                 echo -e "${GREEN} good ${END}"
+                mkdir -p $PWD/cts_diagnostic/host_info/network
+                mkdir cts_diagnostic/settings_files
         fi
 }
 
@@ -418,15 +417,38 @@ function CreateArchive () {
         echo -e "${GREEN} Written to $PWD/$ccs_host-$serverrole.tar.gz ${END}"
 }
 
+if [[ "$*" == *"-h"* && "$*" != "-h" ]]; then
+    echo -e "${RED} Ключ -h не может использоваться с другими ключами ${END}"
+    exit 1
+fi
+
+if [[ "$*" == *"-np"* || "$*" == *"-npar"* || "$*" == *"-arnp"* ]]; then
+    CheckRoot
+    CheckCTS
+    CheckSettingsNoPass
+fi
+
+if [[ "$*" == *"-ar"* ]]; then
+    CheckRoot
+    CheckCTS
+    CreateArchive
+fi
+
 for arg in "$@"; do
     case $arg in
         -h)
             Help
             ;;
         -np)
-            CheckSettingsNoPass
+            # CheckSettingsNoPass уже выполнена
             ;;
         -ar)
+            # CreateArchive уже выполнена
+            ;;
+        -npar)
+            CreateArchive
+            ;;
+        -arnp)
             CreateArchive
             ;;
         *)
@@ -435,8 +457,15 @@ for arg in "$@"; do
     esac
 done
 
-CheckRoot
-CheckCTS
-CheckSettingsFiles
+if [ $# -eq 0 ]; then
+    CheckRoot
+    CheckCTS
+    CheckSettingsFiles
+fi
+
+
+#CheckRoot
+#CheckCTS
+#CheckSettingsFiles
 
 
