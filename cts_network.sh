@@ -345,29 +345,32 @@ function CheckVoexCS(){
 }
 
 function CheckFB() {
-        echo -e "${PURPLE} CheckFB ${END}"
-        front_ip=$(grep "frontend_host:" /opt/express/settings.yaml | awk '{print $2}')
-        back_ip=$(grep "backend_host:" /opt/express/settings.yaml | awk '{print $2}')
-        ping -c 15 $front_ip >> $PWD/cts_diagnostic/host_info/network/ping_front.txt 2> /dev/null
-        status_ok=$(grep 'Connected to' $PWD/cts_diagnostic/host_info/network/voex_r_cs_telnet.txt )
-        status_front=$(grep "PING $front_ip" -A 15 $PWD/cts_diagnostic/host_info/network/ping_front.txt )
-        if [ -n "$status_ok" ]; then
-                echo -e "${GREEN} front ${END}"
-                echo -e "${GREEN} "$status_front" ${END}" | sed 's/data\./data.\n/g; s/ms/ms\n/g'
-       else
-                echo -e "${RED} Please view the file ping_front.txt ${END}"
+    echo -e "${PURPLE} CheckFB ${END}"
+    
+    front_ip=$(grep "frontend_host:" /opt/express/settings.yaml | awk '{print $2}')
+    back_ip=$(grep "backend_host:" /opt/express/settings.yaml | awk '{print $2}')
 
-        fi
-        ping -c 15 $back_ip >> $PWD/cts_diagnostic/host_info/network/ping_back.txt 2> /dev/null
-
-        status_back=$(grep "PING $back_ip " -A 15 $PWD/cts_diagnostic/host_info/network/ping_back.txt )
-        if [ -n "$status_ok" ]; then
-                echo -e "${GREEN} back ${END}"
-                echo -e "${GREEN} "$status_back" ${END}" | sed 's/data\./data.\n/g; s/ms/ms\n/g'
-        else
-                echo -e "${RED} Please view the file ping_back.txt ${END}"
-        fi
+    ping -c 15 $front_ip > $PWD/cts_diagnostic/host_info/network/ping_front.txt 2> /dev/null
+    status_front=$(grep "PING $front_ip" -A 15 $PWD/cts_diagnostic/host_info/network/ping_front.txt)
+    
+    if [ -n "$status_front" ]; then
+        echo -e "${PURPLE} front ${END}"
+        echo -e "${GREEN} $status_front ${END}" | sed 's/data\./data.\n/g; s/ms/ms\n/g'
+    else
+        echo -e "${RED} Please view the file ping_front.txt ${END}"
+    fi
+    
+    ping -c 15 $back_ip > $PWD/cts_diagnostic/host_info/network/ping_back.txt 2> /dev/null
+    status_back=$(grep "PING $back_ip" -A 15 $PWD/cts_diagnostic/host_info/network/ping_back.txt)
+    
+    if [ -n "$status_back" ]; then
+        echo -e "${PURPLE} back ${END}"
+        echo -e "${GREEN} $status_back ${END}" | sed 's/data\./data.\n/g; s/ms/ms\n/g'
+    else
+        echo -e "${RED} Please view the file ping_back.txt ${END}"
+    fi
 }
+
 
 function CheckJanus(){
         echo -e "${PURPLE} CheckJanus ${END}"
