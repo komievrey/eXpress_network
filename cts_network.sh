@@ -33,20 +33,21 @@ function CheckCTS() {
                         echo -e "${YELLOW} Front CTS ${END}"
                         CheckRedis
                         CheckNetwork
-        	            CheckTelnet
-        	            CheckSS
+        	        CheckTelnet
+        	        CheckSS
                         CheckDB
                         CheckKafka
                         CheckEtcd
                         CheckFB
                         CheckSSL
+                        CheckHosts
                         
 
                 elif [ -n "$FBb" ]; then
                         echo -e "${YELLOW} Back CTS ${END}"
                         CheckNetwork
-        	            CheckTelnet
-        	            CheckSS
+        	        CheckTelnet
+        	        CheckSS
                         CheckDB
                         CheckKafka
                         CheckEtcd
@@ -55,13 +56,14 @@ function CheckCTS() {
                         CheckFB
                         CheckJanus
                         CheckSSL
+                        CheckHosts
                         
 
                 elif [ -z "$FBb" ] && [ -z "$FBf" ]; then
                         echo -e "${YELLOW} Single CTS ${END} "
                         CheckNetwork
-        	            CheckTelnet
-        	            CheckSS
+        	        CheckTelnet
+        	        CheckSS
                         CheckDB
                         CheckKafka
                         CheckEtcd
@@ -69,20 +71,24 @@ function CheckCTS() {
                         CheckVoexCS
                         CheckJanus
                         CheckSSL
+                        CheckHosts
                         
 
                 fi
         fi
 	if [ -d "$VOEX" ]; then
             echo -e "${YELLOW} Voex server ${END}"
-		    CheckNetwork
-            CheckSS
-		    CheckVoexService
+		CheckNetwork
+                CheckSS
+		CheckVoexService
+                CheckHosts
 	fi
 }
 #____________________________________________________________________________
 
 function CheckSettingsNoPass () {
+
+
         echo -e "${PURPLE} CheckSettingsNoPass ${END}"
         if [ -d "$CTS" ]; then
                 cp /opt/express/settings.yaml $PWD/cts_network/settings_files/cts_settings.yaml
@@ -95,8 +101,12 @@ function CheckSettingsNoPass () {
 
         for settM in "${settM[@]}"; do 
                 #echo $settM
-                sed -i "s/^$settM .*/$settM /" $PWD/cts_network/settings_files/cts_settings.yaml
+                if [ -d "$CTS" ]; then
+                        sed -i "s/^$settM .*/$settM /" $PWD/cts_network/settings_files/cts_settings.yaml
+                fi
+                if [ -d "$VOEX" ]; then
                 sed -i "s/^$settM .*/$settM /" $PWD/cts_network/settings_files/voice_settings.yaml
+                fi
         done
 
         echo -e "${GREEN} good ${END}"
@@ -140,6 +150,14 @@ function CheckVoexService() {
         echo -e "${GREEN} good ${END}"        
 }
 
+
+function CheckHosts() {
+        echo -e "${PURPLE} CheckHosts ${END}"
+        if [ -d "$CTS" ]; then
+        cp /etc/hosts $PWD/cts_network/network/
+        fi
+        echo -e "${GREEN} good ${END}"   
+}
 function CheckNetwork() {
         echo -e " ${PURPLE} CheckNetwork ${END} "
         ip a > $PWD/cts_network/network/interfaces.txt
